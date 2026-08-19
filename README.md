@@ -9,10 +9,10 @@ This is a template for an out of hand monorepo ts application:
 The monorepo is split into few main folder following Turborepo conventions:
 
 - `apps/`:
-  - `backend/`: contains the backend application code
+  - [backend/](./apps/backend/): contains the backend application code
 - `packages/`:
-  - `common/`: common utility code
-  - `ts-config/`: shared tsconfig configuration
+  - [common/](./packages/common/): common utility code
+  - [ts-config/](./packages/ts-config/): shared tsconfig configuration
 
 Each folder has its own README.md file with more details on their implementation.
 
