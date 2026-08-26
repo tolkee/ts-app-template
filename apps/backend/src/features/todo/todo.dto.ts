@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const createTodoSchema = z.object({
-  content: z.string(),
+  content: z.string().min(1),
 });
 
 export type CreateTodoInput = z.infer<typeof createTodoSchema>;

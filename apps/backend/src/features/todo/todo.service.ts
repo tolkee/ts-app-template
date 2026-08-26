@@ -2,7 +2,7 @@ import type { Db } from "#lib/db";
 import { todosTable, type Todo } from "./todo.schema";
 import type { CreateTodoInput, UpdateTodoInput } from "./todo.dto";
 import type { User } from "#features/auth";
-import { and, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { InvariantError } from "#lib/errors";
 import { TodoNotFoundError } from "./errors";
 
@@ -10,7 +10,11 @@ export class TodoService {
   constructor(private readonly db: Db) {}
 
   async getTodos(userId: User["id"]): Promise<Todo[]> {
-    const todos = this.db.select().from(todosTable).where(eq(todosTable.userId, userId));
+    const todos = this.db
+      .select()
+      .from(todosTable)
+      .where(eq(todosTable.userId, userId))
+      .orderBy(asc(todosTable.isCompleted), desc(todosTable.createdAt));
 
     return todos;
   }

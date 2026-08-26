@@ -10,7 +10,12 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     usePlural: true,
-    schema: authSchema,
+    schema: {
+      users: authSchema.usersTable,
+      sessions: authSchema.sessionsTable,
+      accounts: authSchema.accountsTable,
+      verifications: authSchema.verificationsTable,
+    },
   }),
   secret: env.BETTER_AUTH_SECRET,
   trustedOrigins: env.TRUSTED_ORIGINS,
@@ -24,6 +29,12 @@ export const auth = betterAuth({
           useSecureCookies: true,
         }
       : undefined,
+  socialProviders: {
+    google: {
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    },
+  },
 });
 
 export type AuthUser = typeof auth.$Infer.Session.user;

@@ -5,7 +5,7 @@ import * as z from "zod";
 const envSchema = z.object({
   ENV: z.enum(["dev", "prod"]),
   PORT: z.coerce.number().int().positive().optional().default(3001),
-  DATABASE_URL: z.string().min(1),
+  DATABASE_URL: z.url(),
   TRUSTED_ORIGINS: z
     .string()
     .min(1)
@@ -16,7 +16,6 @@ const envSchema = z.object({
       ),
     )
     .pipe(z.array(z.string()).min(1)),
-  FRONTEND_URL: z.string().min(1),
   BETTER_AUTH_SECRET: z.string().min(1),
   BETTER_AUTH_URL: z.string().min(1),
   AUTH_DOMAIN: z.string().optional(),

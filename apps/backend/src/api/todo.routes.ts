@@ -1,38 +1,54 @@
-import { createTodoSchema, TodoNotFoundError, type TodoService } from "#features/todo";
+import {
+  createTodoSchema,
+  TodoNotFoundError,
+  updateTodoSchema,
+  type TodoService,
+} from "#features/todo";
 import { Hono } from "hono";
-import { sValidator } from "@hono/standard-validator";
 import { type ApiEnv } from "./types";
 import { authGuardMiddleware } from "./middlewares/auth-guard";
-import { ApiErrorCode, type ApiErrorResponse } from "@todo/common/errors";
+import { ApiErrorCode } from "@todo/common/errors";
+import { apiError } from "#lib/errors";
+import { requestValidator } from "./middlewares/request-validator";
 
 export function createTodoRoutes(todoService: TodoService) {
   const routes = new Hono<ApiEnv>()
-    .get("/", authGuardMiddleware, async (c) => {
-      const userId = c.get("user").id;
+    .get("/", authGuardMiddleware, async (ctx) => {
+      const userId = ctx.get("user").id;
+
       const todos = await todoService.getTodos(userId);
 
-      return c.json(todos);
+      return ctx.json(todos, 200);
     })
-    .post("/", authGuardMiddleware, sValidator("json", createTodoSchema), async (c) => {
-      const userId = c.get("user").id;
-      const body = c.req.valid("json");
+    .post("/", authGuardMiddleware, requestValidator("json", createTodoSchema), async (ctx) => {
+      const userId = ctx.get("user").id;
+      const body = ctx.req.valid("json");
+
       const todo = await todoService.createTodo(userId, body);
-
-      return c.json(todo);
+      return ctx.json(todo, 201);
     })
-    .onError((err, c) => {
-      if (err instanceof TodoNotFoundError) {
-        return c.json(
-          {
-            code: ApiErrorCode.TODO_NOT_FOUND,
-            message: "Todo not found",
-          } satisfies ApiErrorResponse,
-          404,
-        );
-      }
+    .patch("/:id", authGuardMiddleware, requestValidator("json", updateTodoSchema), async (ctx) => {
+      const userId = ctx.get("user").id;
+      const body = ctx.req.valid("json");
+      const id = ctx.req.param("id");
 
-      // let above router handle other errors
-      throw err;
+      try {
+        const todo = await todoService.updateTodo(userId, id, body);
+        return ctx.json(todo, 200);
+      } catch (err) {
+        if (err instanceof TodoNotFoundError) {
+          return apiError(ctx, 404, ApiErrorCode.TODO_NOT_FOUND, "Todo not found");
+        }
+
+        throw err;
+      }
+    })
+    .delete("/:id", authGuardMiddleware, async (ctx) => {
+      const userId = ctx.get("user").id;
+      const id = ctx.req.param("id");
+
+      await todoService.removeTodo(userId, id);
+      return ctx.body(null, 204);
     });
 
   return routes;

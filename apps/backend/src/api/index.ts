@@ -1,13 +1,15 @@
 import { Hono } from "hono";
 import { createTodoRoutes } from "./todo.routes";
 import type { Services } from "#lib/services";
-import { auth, UnauthorizedError } from "#features/auth";
+import { auth } from "#features/auth";
 import { authContextMiddleware } from "./middlewares/auth-context";
-import { ApiErrorCode, type ApiErrorResponse } from "@todo/common/errors";
+import { ApiErrorCode } from "@todo/common/errors";
 import { loggerMiddleware } from "./middlewares/logger";
 import { requestId } from "hono/request-id";
 import { cors } from "hono/cors";
 import { env } from "#lib/env";
+import { apiError } from "#lib/errors";
+import type { ApplyGlobalResponse } from "hono/client";
 
 export function createApi(services: Services) {
   const todoRoutes = createTodoRoutes(services.todoService);
@@ -22,30 +24,20 @@ export function createApi(services: Services) {
     )
     .use(loggerMiddleware)
     .use(authContextMiddleware)
-    .all("/api/auth/*", (c) => auth.handler(c.req.raw))
+    .all("/api/auth/*", (ctx) => auth.handler(ctx.req.raw))
     .route("api/todo", todoRoutes)
-    .get("/api/health", (c) => {
-      return c.json({ status: "ok" });
+    .get("/api/health", (ctx) => {
+      return ctx.json({ status: "ok" });
     })
-    .onError((err, c) => {
-      if (err instanceof UnauthorizedError) {
-        return c.json(
-          {
-            code: ApiErrorCode.UNAUTHORIZED,
-            message: "Unauthorized",
-          } satisfies ApiErrorResponse,
-          401,
-        );
-      }
-
-      return c.json(
-        {
-          code: ApiErrorCode.INTERNAL_SERVER_ERROR,
-          message: "Internal server error",
-        } satisfies ApiErrorResponse,
-        500,
-      );
-    });
+    .onError((_, ctx) =>
+      // Fallback for unhandled/unexpected errors
+      apiError(ctx, 500, ApiErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"),
+    );
 }
 
-export type ApiType = ReturnType<typeof createApi>;
+export type ApiType = ApplyGlobalResponse<
+  ReturnType<typeof createApi>,
+  {
+    500: { json: { errorCode: "INTERNAL_SERVER_ERROR"; message: "Internal server error" } };
+  }
+>;
