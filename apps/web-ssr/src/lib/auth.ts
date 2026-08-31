@@ -11,9 +11,14 @@ export const getSession = createServerFn({ method: "GET" }).handler(async () => 
   const headers = getRequestHeaders();
   const cookie = headers.get("cookie");
 
-  const result = await authClient.getSession({
-    fetchOptions: { headers: { cookie } },
-  });
+  try {
+    const result = await authClient.getSession({
+      fetchOptions: { headers: { cookie } },
+    });
 
-  return result.data;
+    return result.data;
+  } catch (error) {
+    console.error("Failed to fetch auth session", error);
+    return null;
+  }
 });
