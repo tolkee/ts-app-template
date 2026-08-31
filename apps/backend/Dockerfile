@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1
 
-FROM oven/bun:1.3.5 AS base
+FROM oven/bun:1.3.14 AS base
 WORKDIR /app
 
 FROM base AS pruner
 COPY . .
-RUN bunx turbo@2.9.18 prune @tolkee/backend --docker
+RUN bunx turbo@2.10.8 prune @todo/backend --docker
 
 FROM base AS installer
 COPY --from=pruner /app/out/json/ ./
@@ -22,4 +22,4 @@ WORKDIR /app/apps/backend
 
 EXPOSE 3000
 
-CMD ["bun", "run", "src/index.ts"]
+CMD ["bun", "run", "start"]
