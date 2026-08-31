@@ -32,6 +32,38 @@
         "postgres": "^3.4.9",
       },
     },
+    "apps/web": {
+      "name": "@todo/web",
+      "dependencies": {
+        "@hugeicons/core-free-icons": "^4.3.0",
+        "@hugeicons/react": "^1.1.10",
+        "@tailwindcss/vite": "^4",
+        "@tanstack/react-devtools": "latest",
+        "@tanstack/react-query": "^5.102.6",
+        "@tanstack/react-router": "latest",
+        "@tanstack/react-router-devtools": "latest",
+        "@todo/backend": "workspace:*",
+        "@todo/common": "workspace:*",
+        "@todo/ui": "workspace:*",
+        "better-auth": "^1.7.1",
+        "hono": "^4.13.5",
+        "react": "^19.2.6",
+        "react-dom": "^19.2.6",
+        "tailwindcss": "^4",
+        "zod": "^4.4.3",
+      },
+      "devDependencies": {
+        "@tanstack/devtools-vite": "latest",
+        "@tanstack/router-plugin": "latest",
+        "@todo/ts-config": "workspace:*",
+        "@types/node": "^22",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "@vitejs/plugin-react": "^6",
+        "typescript": "^6",
+        "vite": "^8",
+      },
+    },
     "apps/web-ssr": {
       "name": "@todo/web-ssr",
       "dependencies": {
@@ -713,6 +745,8 @@
     "@todo/ts-config": ["@todo/ts-config@workspace:packages/ts-config"],
 
     "@todo/ui": ["@todo/ui@workspace:packages/ui"],
+
+    "@todo/web": ["@todo/web@workspace:apps/web"],
 
     "@todo/web-ssr": ["@todo/web-ssr@workspace:apps/web-ssr"],
 
@@ -1835,6 +1869,8 @@
     "@tanstack/start-server-core/seroval": ["seroval@1.6.4", "", {}, "sha512-LErWMNS2RRFdu2RMA5u/PA59/IWs0XsikyEXGQ2/36iEWFrdG0ABmg17E17cikrv76891kOAMq3TkTFXpwAHXw=="],
 
     "@todo/ui/typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
+
+    "@todo/web/typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
 
     "@todo/web-ssr/typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
 
