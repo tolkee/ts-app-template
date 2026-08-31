@@ -5,7 +5,7 @@ export default defineRailway((ctx) => {
   const database = postgres("Postgres");
 
   const backend = service("backend", {
-    source: github("tolkee/ts-app-template", { branch: "main" }),
+    source: github("tolkee/ts-app-template", { branch: "main", checkSuites: true }),
     build: {
       watchPatterns: [
         "/apps/backend/**",
