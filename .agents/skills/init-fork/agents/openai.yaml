@@ -1,0 +1,4 @@
+interface:
+  display_name: "Initialize Fork"
+  short_description: "Rename a fork without changing Todo product code"
+  default_prompt: "Use $init-fork to rename this template for my new project."
