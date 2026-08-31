@@ -1,20 +1,5 @@
 # ts-app-template
 
-## Deployment template
-
-The repository includes deployment configuration for the complete stack:
-
-- [`.railway/railway.ts`](./.railway/railway.ts) declares the Railway backend,
-  PostgreSQL database, health check, environment-variable references, and production domain.
-- [`apps/web/vercel.json`](./apps/web/vercel.json) configures the Vite SPA and its history fallback.
-- [`apps/web-ssr/vercel.json`](./apps/web-ssr/vercel.json) configures the TanStack Start application.
-
-Railway and Vercel are connected directly to GitHub. Pull requests targeting the repository's
-default branch create preview deployments, and merges to the default branch deploy production.
-When using this repository as a template, update the GitHub repository, branch, and domains in
-`.railway/railway.ts`, then create one Vercel project for each web app with `apps/web` and
-`apps/web-ssr` as their respective root directories.
-
 This is a template for an out of hand monorepo ts application:
 
 - Monorepo capabilities are done using [Turborepo](https://turborepo.dev/).
@@ -27,6 +12,7 @@ The monorepo is split into few main folder following Turborepo conventions:
   - [backend/](./apps/backend/): contains the backend application code
 - `packages/`:
   - [common/](./packages/common/): common utility code
+  - [ui/](./packages/ui/): common ui components
   - [ts-config/](./packages/ts-config/): shared tsconfig configuration
 
 Each folder has its own README.md file with more details on their implementation.
@@ -135,3 +121,18 @@ export const env = parseEnv(envSchema, process.env);
 import { env } from "#lib/env";
 console.log(env.ENV);
 ```
+
+# Deployment to cloud
+
+The repository includes deployment configuration for the complete stack:
+
+- [`.railway/railway.ts`](./.railway/railway.ts) declares the Railway backend,
+  PostgreSQL database, health check, environment-variable references, and production domain.
+- [`apps/web/vercel.json`](./apps/web/vercel.json) configures the Vite SPA and its history fallback.
+- [`apps/web-ssr/vercel.json`](./apps/web-ssr/vercel.json) configures the TanStack Start application.
+
+Railway and Vercel are connected directly to GitHub. Pull requests targeting the repository's
+default branch create preview deployments, and merges to the default branch deploy production.
+When using this repository as a template, update the GitHub repository, branch, and domains in
+`.railway/railway.ts`, then create one Vercel project for each web app with `apps/web` and
+`apps/web-ssr` as their respective root directories.

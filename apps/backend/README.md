@@ -38,6 +38,42 @@ A feature folder has it's own sub architecure. It can basically contains anythin
 - `src/features/todo/todo.dto.ts`: this contains dtos zod schemas/types used by the feature service methods. They can be used in consumers to validate/parse input data like request bodies in the api.
 - `src/features/todo/todo.index.ts`: barrel file exporting the public parts of the feature.
 
+## Errors in backend
+
+In the backend project, we have two types of errors:
+
+The internal errors, that are JavaScript errors thrown by the different parts of the application (services, repositories etc...). When developing your should make sure to be aware of those errors and handle them appropriately.
+
+The api errors, that are public facing errors returned by the api layer. Those errors are send directly by the controllers, or onError, using the [`apiError`](src/lib/errors.ts) function and declaring a new error code in shared [`ApiErrorCode`](../../packages/common/src/errors.ts) enum.
+For example :
+
+```ts
+try {
+  const todo = await todoService.updateTodo(userId, id, body);
+  return ctx.json(todo, 200);
+} catch (err) {
+  if (err instanceof TodoNotFoundError) {
+    return apiError(ctx, 404, ApiErrorCode.TODO_NOT_FOUND, "Todo not found");
+  }
+
+  throw err;
+}
+```
+
+You should make sure that those errors are ones actionnable by the api caller, and not some internal errors. Every internal errors not handle in the api routers, will be caught by the global error handler in [`main hono router`](src/api/index.ts)
+
+Once returned, those api errors will be infered in the response type of the endpoint through the rpc client, allowing the client to know which errors are expected and handle them accordingly.
+
+## Request Validation
+
+To validate the incoming requests, we use a custom validator [request-validator](src/api/middleware/request-validator.ts) based on Standard Schema hono validator, but with some custom formatting to throw validation errors matching our api error format.
+
+Then in api endpoints, we use the validator middleware to validate the incoming requests (body, search etc...) thanks to a zod schema. (Advantage is that with Standard Schema, we could swap the schema lib we use)
+
+```ts
+.patch("/:id", authGuardMiddleware, requestValidator("json", updateTodoSchema), async (ctx) => {
+```
+
 ## Dependency injection
 
 In backend, most of router and services depends on external dependencies like database connection, and other services. To be able to test and maintain easily those parts, we do not use singleton, but instead use dependency injection.
@@ -62,6 +98,12 @@ bun run infra:up # starts the infra locally
 bun run infra:up:d # starts the infra locally in detached mode
 bun run infra:down # stops the infra locally
 bun run infra:logs # shows the logs of the infra
+```
+
+Be sure also to run the migrations to create the database schema :
+
+```bash
+bun run db:migrate
 ```
 
 Then just update the .env file to match your local infra configuration.

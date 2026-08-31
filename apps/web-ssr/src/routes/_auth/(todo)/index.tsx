@@ -6,7 +6,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth/(todo)/")({
   component: App,
-  beforeLoad: async ({ context: { user, queryClient } }) => {
+  loader: async ({ context: { user, queryClient } }) => {
     await queryClient.query(getTodoQuery.options(user.id));
   },
   errorComponent: () => (

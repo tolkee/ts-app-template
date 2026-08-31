@@ -7,7 +7,13 @@ export type RouterContext = {
 };
 
 export function getRouter() {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 30_000,
+      },
+    },
+  });
 
   const router = createTanStackRouter({
     routeTree,
