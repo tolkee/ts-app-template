@@ -16,17 +16,26 @@ After renaming, repeat the first two searches. Investigate every remaining resul
 
 ## Technical identity to rename
 
-| Current identity                           | Fork identity                                                         |
-| ------------------------------------------ | --------------------------------------------------------------------- |
-| Workspace scope `@todo`                    | `@<slug>`                                                             |
-| Root package/project `ts-app-template`     | `<slug>`                                                              |
-| GitHub source `tolkee/ts-app-template`     | fork's `owner/repository`                                             |
-| Docker Compose project `todo`              | `<slug>`                                                              |
-| Railway project `ts-app-template`          | `<slug>`                                                              |
-| Vercel projects `todo-web`, `todo-web-ssr` | `<slug>-web`, `<slug>-web-ssr`                                        |
-| Template production domains                | user-provided domains, or temporary `<slug>.example.com` placeholders |
+| Current identity                       | Fork identity                                                         |
+| -------------------------------------- | --------------------------------------------------------------------- |
+| Workspace scope `@todo`                | `@<slug>`                                                             |
+| Root package/project `ts-app-template` | `<slug>`                                                              |
+| GitHub source `tolkee/ts-app-template` | fork's `owner/repository`                                             |
+| Docker Compose project `todo`          | `<slug>`                                                              |
+| Railway project `ts-app-template`      | `<slug>`                                                              |
+| Selected Vercel project                | `<slug>-web` for SPA or `<slug>-web-ssr`                              |
+| Template production domains            | user-provided domains, or temporary `<slug>.example.com` placeholders |
 
-The root `package.json` remains an unscoped private monorepo name. App and package manifests keep their suffixes: `@<slug>/backend`, `@<slug>/web`, `@<slug>/web-ssr`, `@<slug>/common`, `@<slug>/ts-config`, and `@<slug>/ui`.
+The root `package.json` remains an unscoped private monorepo name. Retained app and package manifests keep their suffixes: `@<slug>/backend`, either `@<slug>/web` or `@<slug>/web-ssr`, `@<slug>/common`, `@<slug>/ts-config`, and `@<slug>/ui`.
+
+## Frontend selection
+
+| User choice | Keep           | Remove         | Vercel project   |
+| ----------- | -------------- | -------------- | ---------------- |
+| SPA         | `apps/web`     | `apps/web-ssr` | `<slug>-web`     |
+| SSR         | `apps/web-ssr` | `apps/web`     | `<slug>-web-ssr` |
+
+After the user chooses, read exactly one frontend reference: [spa.md](spa.md) or [ssr.md](ssr.md). It contains the selected app's tracked namespace inventory and removal checks. Do not read or apply the other frontend reference.
 
 ## Current tracked `@todo/*` locations
 
@@ -37,12 +46,6 @@ The root `package.json` remains an unscoped private monorepo name. App and packa
 - `apps/backend/package.json`
 - `apps/backend/Dockerfile`
 - `apps/backend/tsconfig.json`
-- `apps/web/package.json`
-- `apps/web/tsconfig.json`
-- `apps/web/components.json`
-- `apps/web-ssr/package.json`
-- `apps/web-ssr/tsconfig.json`
-- `apps/web-ssr/components.json`
 - `packages/common/package.json`
 - `packages/common/tsconfig.json`
 - `packages/ts-config/package.json`
@@ -58,32 +61,6 @@ The root `package.json` remains an unscoped private monorepo name. App and packa
 - `apps/backend/src/lib/env.ts`
 - `apps/backend/src/lib/errors.ts`
 
-### SPA source imports
-
-- `apps/web/src/components/site-header.tsx`
-- `apps/web/src/components/theme-switcher.tsx`
-- `apps/web/src/features/todo/components/create-todo-dialog.tsx`
-- `apps/web/src/features/todo/components/todo-card.tsx`
-- `apps/web/src/lib/api.ts`
-- `apps/web/src/lib/env.ts`
-- `apps/web/src/lib/errors.ts`
-- `apps/web/src/main.tsx`
-- `apps/web/src/routes/__root.tsx`
-- `apps/web/src/routes/_auth/(todo)/index.tsx`
-- `apps/web/src/routes/login.tsx`
-
-### SSR source imports
-
-- `apps/web-ssr/src/components/site-header.tsx`
-- `apps/web-ssr/src/components/theme-switcher.tsx`
-- `apps/web-ssr/src/features/todo/components/create-todo-dialog.tsx`
-- `apps/web-ssr/src/features/todo/components/todo-card.tsx`
-- `apps/web-ssr/src/lib/api.ts`
-- `apps/web-ssr/src/lib/env.ts`
-- `apps/web-ssr/src/lib/errors.ts`
-- `apps/web-ssr/src/routes/__root.tsx`
-- `apps/web-ssr/src/routes/login.tsx`
-
 ## Current infrastructure identity locations
 
 - `.railway/railway.ts`
@@ -91,7 +68,7 @@ The root `package.json` remains an unscoped private monorepo name. App and packa
   - Railway project name
   - API custom domain
   - `BETTER_AUTH_URL`
-  - SPA and SSR `TRUSTED_ORIGINS`
+  - the selected frontend `TRUSTED_ORIGINS`
   - shared `AUTH_DOMAIN`
 - `apps/backend/package.json`
   - four `docker compose -p todo` scripts
@@ -100,7 +77,7 @@ The root `package.json` remains an unscoped private monorepo name. App and packa
 - `package.json`
   - root project name
 
-Vercel project names are provider state, not tracked source. Derive them during `$init-deploy`. Local `.vercel/project.json` files and `.vercel/*.json` helper files are ignored artifacts and must not be committed as identity sources.
+The Vercel project name is provider state, not tracked source. Derive the single selected project during `$init-deploy`. Local `.vercel/project.json` files and `.vercel/*.json` helper files are ignored artifacts and must not be committed as identity sources.
 
 ## Product-side Todo references to preserve
 

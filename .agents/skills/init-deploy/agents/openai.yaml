@@ -1,4 +1,4 @@
 interface:
   display_name: "Initialize Deployment"
-  short_description: "Release this fork through Railway and Vercel"
-  default_prompt: "Use $init-deploy to deploy this fork with Railway, Vercel, and GitHub previews."
+  short_description: "Deploy one selected frontend through Railway and Vercel"
+  default_prompt: "Use $init-deploy to release the selected frontend and API on my confirmed domains."
