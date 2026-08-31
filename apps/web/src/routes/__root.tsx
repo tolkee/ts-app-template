@@ -2,10 +2,8 @@ import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanst
 
 import { Toaster } from "@todo/ui/components/toast";
 
-import appCss from "@todo/ui/globals.css?url";
 import { type RouterContext } from "../router";
 import { authClient } from "#lib/auth";
-import { ThemeProvider } from "#components/theme-provider";
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   head: () => ({
@@ -19,12 +17,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       },
       {
         title: "Todo app",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
       },
     ],
   }),
@@ -49,11 +41,9 @@ function RootDocument() {
   return (
     <>
       <HeadContent />
-      <ThemeProvider defaultTheme="system" storageKey="theme">
-        <Outlet />
-        <Toaster />
-        <Scripts />
-      </ThemeProvider>
+      <Outlet />
+      <Toaster />
+      <Scripts />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { SiteHeader } from "#components/site-header";
-import { authClient, getSession } from "#lib/auth";
+import { authClient } from "#lib/auth";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Button } from "@todo/ui/components/button";
 import { Google } from "@todo/ui/components/ui/svgs/google";
@@ -12,7 +12,7 @@ const searchParamsSchema = z.object({
 export const Route = createFileRoute("/login")({
   component: RouteComponent,
   beforeLoad: async ({ search }) => {
-    const session = await getSession();
+    const { data: session } = await authClient.getSession();
 
     if (session) {
       throw redirect({ to: search.redirect ?? "/" });
