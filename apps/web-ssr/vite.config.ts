@@ -14,6 +14,7 @@ const config = defineConfig({
     viteReact(),
     nitro({
       preset: "vercel",
+      traceDeps: ["react"],
       vercel: { functions: { runtime: "nodejs24.x" } },
     }),
   ],
